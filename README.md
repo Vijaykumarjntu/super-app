@@ -1,22 +1,28 @@
-# Super App (scaffold)
+# Super App (Recreated)
 
-This repository is a scaffold for the Super App project required in the assignment.
+This repository is a Next.js + Tailwind starter matching the project requirements (close-match to Figma).
 
-Quick start
+Setup
 
-1. Copy your API keys into `.env.local` (see `.env.local.example`).
-2. Install dependencies:
+1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Run the dev server:
+2. Copy env example and add API keys:
+
+```bash
+cp .env.local.example .env.local
+```
+
+3. Run dev server:
 
 ```bash
 npm run dev
 ```
 
 Notes
-- State management: `@reduxjs/toolkit` (selected)
-- Styling: Tailwind CSS
+- API placeholders in `.env.local.example`
+- State persistence for auth is implemented via `localStorage` in `src/store/index.js`
+- Movie discovery uses OMDB; Weather uses OpenWeatherMap; News uses NewsAPI (configure keys in `.env.local`)
