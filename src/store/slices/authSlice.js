@@ -1,34 +1,26 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  name: '',
-  username: '',
-  email: '',
-  mobile: '',
+  user: null,
   categories: [],
-  registered: false,
-}
+};
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    register(state, action) {
-      const { name, username, email, mobile } = action.payload
-      state.name = name
-      state.username = username
-      state.email = email
-      state.mobile = mobile
-      state.registered = true
+    register: (state, action) => {
+      state.user = action.payload;
     },
-    setCategories(state, action) {
-      state.categories = action.payload
+    setCategories: (state, action) => {
+      state.categories = action.payload;
     },
-    reset(state) {
-      Object.assign(state, initialState)
-    }
-  }
-})
+    logout: (state) => {
+      state.user = null;
+      state.categories = [];
+    },
+  },
+});
 
-export const { register, setCategories, reset } = authSlice.actions
-export default authSlice.reducer
+export const { register, setCategories, logout } = authSlice.actions;
+export default authSlice.reducer;
