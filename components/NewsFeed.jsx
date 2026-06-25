@@ -39,9 +39,12 @@ export default function NewsFeed({ compact = false }) {
   }, [articles])
 
   if (loading) return <div className="text-[#AAAAAA] text-sm">Loading news…</div>
-  if (error) return <div className="text-[#ff3333] text-sm">{error}</div>
 
   const article = articles[index] || {}
+
+  if (!article.title) {
+    return <div className="text-[#AAAAAA] text-sm">No articles available</div>
+  }
 
   if (compact) {
     return (
