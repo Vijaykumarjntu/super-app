@@ -1,78 +1,85 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout } from '../src/store/slices/authSlice'
-import NewsFeed from '../components/NewsFeed'
 import ProfileCard from '../components/ProfileCard'
 import WeatherWidget from '../components/WeatherWidget'
+import NewsFeed from '../components/NewsFeed'
 import Timer from '../components/Timer'
-import MovieList from '../components/MovieList'
 
-export default function Dashboard(){
-  const { user, categories } = useSelector(s=>s.auth)
+export default function Dashboard() {
+  const { user } = useSelector((s) => s.auth)
   const dispatch = useDispatch()
+  const router = useRouter()
+  const [notes, setNotes] = useState(
+    'Super App dashboard notes:\n- Review latest releases\n- Track your favorites\n- Schedule movie night\n- Keep categories updated for better recommendations'
+  )
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/')
+    }
+  }, [user, router])
+
+  if (!user) return null
 
   return (
     <>
-      <Head><title>Super App - Dashboard</title></Head>
-      <div className="min-h-screen bg-bg-deep text-white p-6">
+      <Head>
+        <title>Super App - Dashboard</title>
+      </Head>
+      <div className="min-h-screen bg-black text-white px-6 py-8">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
             <div>
-              <h1 className="text-3xl font-bold neon-green">Super App</h1>
-              <p className="text-gray-400">Welcome back, {user?.name || 'User'}</p>
+              <h1 className="text-4xl font-bold neon-green">Super App</h1>
+              <p className="mt-2 text-[#AAAAAA]">Welcome back, {user?.name || 'KK Vinay'}</p>
             </div>
-            <button onClick={()=>dispatch(logout())} className="px-4 py-2 border border-red-500 rounded-full text-red-400">Logout</button>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => router.push('/recommendations')}
+                className="rounded-full bg-[#6BE06B] px-5 py-3 text-sm font-semibold text-black hover:bg-[#57d457] transition"
+              >
+                Recommendations
+              </button>
+              <button
+                onClick={() => {
+                  dispatch(logout())
+                  router.push('/')
+                }}
+                className="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white/90 hover:bg-white/5 transition"
+              >
+                Logout
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="space-y-6">
-              <div className="bg-panel rounded-2xl p-6">
-                <h2 className="text-lg font-semibold mb-4">Profile</h2>
-                <ProfileCard user={user} />
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            <div className="space-y-5 xl:row-span-2">
+              <ProfileCard user={user} />
+              <WeatherWidget />
+            </div>
 
-              <div className="bg-panel rounded-2xl p-6">
-                <WeatherWidget />
-              </div>
-
-              <div className="bg-panel rounded-2xl p-6">
-                <Timer />
+            <div className="rounded-[15px] bg-[#E6C15A] p-6" style={{ minHeight: '340px' }}>
+              <h2 className="text-xl font-bold text-black mb-4">All notes</h2>
+              <div className="max-h-[280px] overflow-y-auto notes-scrollbar pr-2">
+                <p className="text-black text-sm leading-[1.6] whitespace-pre-line">
+                  {notes}
+                </p>
               </div>
             </div>
 
-            <div className="lg:col-span-1">
-              <div className="bg-panel rounded-2xl p-6 mb-6">
-                <NewsFeed />
-              </div>
-
-              <div className="bg-panel rounded-2xl p-6">
-                <MovieList categories={categories} />
-              </div>
+            <div className="rounded-[15px] bg-[#181F4A] p-4">
+              <NewsFeed compact />
             </div>
 
-            <div className="space-y-6">
-              <div className="bg-panel rounded-2xl p-6">
-                <h2 className="text-lg font-semibold mb-4">Quick Notes</h2>
-                <Notes />
-              </div>
-
-              <div className="bg-panel rounded-2xl p-6">
-                <h2 className="text-lg font-semibold mb-4">Selected Categories</h2>
-                <div className="flex flex-wrap gap-2">{(categories||[]).map(c=> <span key={c} className="px-3 py-1 bg-neon-green text-black rounded-full text-xs">{c}</span>)}</div>
-              </div>
+            <div className="rounded-[15px] bg-[#181F4A] p-5">
+              <Timer />
             </div>
-
           </div>
         </div>
       </div>
     </>
   )
-}
-
-function Notes(){
-  const [notes, setNotes] = React.useState('')
-  React.useEffect(()=>{ const s = localStorage.getItem('superapp-notes'); if (s) setNotes(s) }, [])
-  function save(v){ setNotes(v); localStorage.setItem('superapp-notes', v) }
-  return <textarea value={notes} onChange={e=>save(e.target.value)} className="w-full h-48 bg-black border border-gray-700 rounded-2xl p-3 text-sm resize-none" placeholder="Write your thoughts..." />
 }

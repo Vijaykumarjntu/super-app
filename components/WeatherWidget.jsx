@@ -1,35 +1,47 @@
 import { useEffect, useState } from 'react'
 
-export default function WeatherWidget(){
-  const [weather, setWeather] = useState(null)
-  const [loading, setLoading] = useState(true)
+export default function WeatherWidget() {
+  const [dateTime, setDateTime] = useState(new Date())
 
-  useEffect(()=>{
-    async function fetchIt(){
-      const key = process.env.NEXT_PUBLIC_OWM_API_KEY || ''
-      if (!key) { setLoading(false); return }
-      try{
-        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=New%20York&units=metric&appid=${key}`)
-        const d = await res.json()
-        setWeather(d)
-      }catch(e){ console.warn(e) }
-      setLoading(false)
-    }
-    fetchIt()
-  },[])
+  useEffect(() => {
+    const timer = setInterval(() => setDateTime(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
 
-  if (loading) return <div className="p-4">Loading weather…</div>
-  if (!weather || weather.cod !== 200) return <div className="p-4 text-gray-400">Weather not available</div>
-
-  const temp = Math.round(weather.main.temp)
-  const icon = weather.weather?.[0]?.icon
+  const formattedDate = dateTime.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  })
+  const formattedTime = dateTime.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
 
   return (
-    <div className="p-4 rounded bg-panel">
-      {icon && <img src={`https://openweathermap.org/img/wn/${icon}@2x.png`} alt="icon" className="w-16 h-16" />}
-      <div className="mt-2">
-        <div className="text-2xl font-semibold">{temp}°C</div>
-        <div className="text-sm text-gray-300">{weather.name}</div>
+    <div className="rounded-[20px] bg-[#061229] overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.4)]" style={{ minHeight: '250px' }}>
+      <div className="h-[60px] bg-[#ff4bc5] px-6 py-4">
+        <div className="text-xs uppercase tracking-[0.2em] text-white/90">{formattedDate}</div>
+        <div className="mt-1 text-sm font-semibold text-white/90">{formattedTime}</div>
+      </div>
+      <div className="flex flex-col items-center justify-center py-10 px-6 text-center">
+        <p className="text-5xl font-bold text-white">24°C</p>
+        <p className="mt-3 text-sm text-white/70">Mostly clear</p>
+      </div>
+      <div className="grid grid-cols-3 gap-3 px-6 pb-6">
+        <div className="rounded-3xl bg-white/5 p-4 text-center text-sm text-white/80">
+          <p className="font-semibold text-white">Humidity</p>
+          <p className="mt-2">68%</p>
+        </div>
+        <div className="rounded-3xl bg-white/5 p-4 text-center text-sm text-white/80">
+          <p className="font-semibold text-white">Wind</p>
+          <p className="mt-2">12 km/h</p>
+        </div>
+        <div className="rounded-3xl bg-white/5 p-4 text-center text-sm text-white/80">
+          <p className="font-semibold text-white">Clouds</p>
+          <p className="mt-2">14%</p>
+        </div>
       </div>
     </div>
   )

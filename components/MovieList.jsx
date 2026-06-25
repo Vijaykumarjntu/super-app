@@ -61,22 +61,32 @@ export default function MovieList({ categories = [] }) {
   if (!categories || categories.length === 0) return null
 
   return (
-    <div className="bg-zinc-900 rounded-3xl p-6">
+    <div className="bg-[#090A0D] rounded-[30px] p-6 shadow-[0_20px_80px_rgba(0,0,0,0.45)]">
       <h2 className="text-xl font-semibold mb-4">Discover Movies</h2>
       {loading && <div className="text-gray-400">Loading movies…</div>}
       {error && <div className="text-red-400">{error}</div>}
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        {movies.map(m => (
-          <div key={m.imdbID} className="bg-black/40 p-3 rounded-lg cursor-pointer hover:scale-105 transition-transform" onClick={() => openDetails(m.imdbID)}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {movies.map((m) => (
+          <button
+            key={m.imdbID}
+            type="button"
+            onClick={() => openDetails(m.imdbID)}
+            className="group relative overflow-hidden rounded-[18px] bg-[#111217] shadow-[0_10px_25px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:scale-[1.05]"
+          >
             {m.Poster && m.Poster !== 'N/A' ? (
-              <img src={m.Poster} alt={m.Title} className="w-full h-40 object-cover rounded" />
+              <div className="relative h-52 w-full">
+                <img src={m.Poster} alt={m.Title} className="h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+              </div>
             ) : (
-              <div className="w-full h-40 bg-gray-800 rounded flex items-center justify-center text-gray-400">No image</div>
+              <div className="flex h-52 items-center justify-center bg-gray-800 text-gray-400">No image</div>
             )}
-            <div className="mt-2 text-sm font-medium">{m.Title}</div>
-            <div className="text-xs text-gray-400">{m.Year}</div>
-          </div>
+            <div className="p-4 text-left">
+              <div className="text-sm font-semibold text-white">{m.Title}</div>
+              <div className="mt-1 text-xs text-[#8A8A8A]">{m.Year}</div>
+            </div>
+          </button>
         ))}
       </div>
 

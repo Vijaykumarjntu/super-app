@@ -14,3 +14,22 @@
 .error-text{ color: #ff4444 }
 
 body { background: #0A0A0A; }
+
+.notes-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #fff4cc #f3d47c;
+}
+
+.notes-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.notes-scrollbar::-webkit-scrollbar-track {
+  background: #f3d47c;
+  border-radius: 999px;
+}
+
+.notes-scrollbar::-webkit-scrollbar-thumb {
+  background: #fff4cc;
+  border-radius: 999px;
+}
