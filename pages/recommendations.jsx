@@ -49,20 +49,26 @@ export default function RecommendationsPage() {
   const [error, setError] = useState(null)
   const [selectedMovie, setSelectedMovie] = useState(null)
 
-  useEffect(() => {
-    if (!user) {
-      router.push('/')
-    }
-  }, [user, router])
+  const safeCategories = Array.isArray(categories) ? categories : []
+  const isSignedIn = Boolean(user)
 
-  if (!user) return null
+  useEffect(() => {
+    if (!isSignedIn) {
+      router.replace('/')
+      return
+    }
+
+    if (safeCategories.length === 0) {
+      router.replace('/onboarding')
+    }
+  }, [isSignedIn, safeCategories.length, router])
 
   const selectedGenres = useMemo(() => {
-    if (Array.isArray(categories) && categories.length > 0) {
-      return categories
+    if (safeCategories.length > 0) {
+      return safeCategories
     }
     return DEFAULT_GENRES
-  }, [categories])
+  }, [safeCategories])
 
   const avatarLabel = useMemo(() => {
     if (!user?.name) return 'SA'
@@ -115,6 +121,12 @@ export default function RecommendationsPage() {
       .finally(() => setLoading(false))
   }, [selectedGenres])
 
+  const handleLogout = () => {
+    dispatch(logout())
+    setSelectedMovie(null)
+    router.replace('/')
+  }
+
   const openMovie = async (imdbID) => {
     if (!imdbID) return
     try {
@@ -131,6 +143,8 @@ export default function RecommendationsPage() {
     }
   }
 
+  if (!isSignedIn) return null
+
   return (
     <>
       <Head>
@@ -142,10 +156,7 @@ export default function RecommendationsPage() {
           <div className="text-[#6BE06B] font-[cursive] text-[42px] font-medium">Super app</div>
           <div className="flex items-center gap-3 justify-between md:justify-end">
             <button
-              onClick={() => {
-                dispatch(logout())
-                router.push('/')
-              }}
+              onClick={handleLogout}
               className="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white/90 hover:bg-white/5 transition"
             >
               Logout

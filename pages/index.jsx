@@ -8,6 +8,7 @@ import { setUser } from '../src/store/slices/authSlice'
 export default function Home() {
   const router = useRouter()
   const user = useSelector((state) => state.auth.user)
+  const categories = useSelector((state) => state.auth.categories)
   const dispatch = useDispatch()
 
   const [formData, setFormData] = useState({
@@ -22,10 +23,14 @@ export default function Home() {
   const [touched, setTouched] = useState({})
 
   useEffect(() => {
-    if (user) {
+    if (!user) return
+
+    if (Array.isArray(categories) && categories.length > 0) {
       router.push('/profile')
+    } else {
+      router.push('/onboarding')
     }
-  }, [user, router])
+  }, [user, categories, router])
 
   const validateField = (name, value) => {
     let error = ''

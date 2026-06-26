@@ -9,7 +9,7 @@ import NewsFeed from '../components/NewsFeed'
 import Timer from '../components/Timer'
 
 export default function Dashboard() {
-  const { user } = useSelector((s) => s.auth)
+  const { user, categories } = useSelector((s) => s.auth)
   const dispatch = useDispatch()
   const router = useRouter()
   const [notes, setNotes] = useState(
@@ -19,8 +19,13 @@ export default function Dashboard() {
   useEffect(() => {
     if (!user) {
       router.push('/')
+      return
     }
-  }, [user, router])
+
+    if (!Array.isArray(categories) || categories.length === 0) {
+      router.push('/onboarding')
+    }
+  }, [user, categories, router])
 
   if (!user) return null
 

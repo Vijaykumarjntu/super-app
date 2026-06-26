@@ -14,8 +14,13 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!user) {
       router.push('/')
+      return
     }
-  }, [user, router])
+
+    if (!Array.isArray(categories) || categories.length === 0) {
+      router.push('/onboarding')
+    }
+  }, [user, categories, router])
 
   if (!user) return null
 
